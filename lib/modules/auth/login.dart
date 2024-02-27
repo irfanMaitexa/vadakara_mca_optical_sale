@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/auth/user_registration.dart';
+import 'package:optical_sale/modules/user/user_root_screen.dart';
 import 'package:optical_sale/utils/constants.dart';
 import 'package:optical_sale/utils/validator.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
 
-
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key? key});
+   LoginScreen({Key? key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final _formKey =   GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
   var outlineInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(10.0),
@@ -39,7 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        
         title: const Text(
           'Login',
           style: TextStyle(
@@ -50,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: SingleChildScrollView(
           child: Form(
-            key:  _formKey,
+            key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -60,11 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomTextField(
                   hintText: 'Enter Email',
                   controller: _emailController,
-                  
                   borderColor: Colors.grey.shade300,
                   validator: (value) {
-                   return validateEmail(value);
-                    
+                    return validateEmail(value);
                   },
                 ),
                 const SizedBox(height: 30),
@@ -85,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                   ),
-                  validator: (value) =>  validatePassword(value),
+                  validator: (value) => validatePassword(value),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -126,7 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const UserRegistrationScreen(),
+                            builder: (context) =>
+                                const UserRegistrationScreen(),
                           ),
                         );
                       },
@@ -147,13 +145,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _loginHandler() {
-    setState(() {
-      if(_formKey.currentState!.validate()){
+    // setState(() {
+    //   if(_formKey.currentState!.validate()){
 
-      
-      
-
-      }
-    });
+    //   }
+    // });
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UserRootScreen(),
+      ),
+      (route) => false,
+    );
   }
 }
