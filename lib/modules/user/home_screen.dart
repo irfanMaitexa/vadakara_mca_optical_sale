@@ -1,5 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:optical_sale/modules/user/cart_list_screen.dart';
+import 'package:optical_sale/modules/user/product_Details_screen.dart';
+import 'package:optical_sale/modules/user/product_list_screen.dart';
 import 'package:optical_sale/utils/constants.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
@@ -115,6 +118,18 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   const SizedBox(
                     height: 10,
                   ),
+
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+                    height: 50,
+                    child: CustomButton(
+                      text: 'Book  eye specialist',
+                      onPressed: () {},
+                    ),
+                  ),
+
+                  //category
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
@@ -131,24 +146,36 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: categoryList.length,
-                        itemBuilder: (context, index) => Container(
-                              padding: const EdgeInsets.all(10),
-                              margin: const EdgeInsets.only(left: 10),
-                              decoration: BoxDecoration(
-                                  color: KButtonColor,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(categoryList[index]),
-                                    radius: 50,
-                                  ),
-                                  const Text(
-                                    'category name',
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ],
+                        itemBuilder: (context, index) => GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ProductListNew(
+                                        name: 'sun glass',
+                                      ),
+                                    ));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                margin: const EdgeInsets.only(left: 10),
+                                decoration: BoxDecoration(
+                                    color: KButtonColor,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage(categoryList[index]),
+                                      radius: 50,
+                                    ),
+                                    const Text(
+                                      'category name',
+                                      style: TextStyle(color: Colors.white),
+                                    )
+                                  ],
+                                ),
                               ),
                             )),
                   ),
@@ -163,43 +190,59 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ),
                   ),
 
-
                   Container(
                     height: 150,
                     margin: const EdgeInsets.symmetric(vertical: 20),
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: categoryList.length,
-                        itemBuilder: (context, index) => Container(
-                              padding: const EdgeInsets.all(10),
-                              margin: const EdgeInsets.only(left: 10),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: KButtonColor
-                                  ),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                children: [
-                                  Image(
-                                    image: NetworkImage(categoryList[index],
-                                    
+                        itemBuilder: (context, index) => GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          UserProductDetailsScreen(
+                                        name: 'name',
+                                        imageUrl: popularProduct[index],
+                                      ),
+                                    ));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                margin: const EdgeInsets.only(left: 10),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: KButtonColor),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Column(
+                                  children: [
+                                    Image(
+                                      image: NetworkImage(
+                                        popularProduct[index],
+                                      ),
+                                      width: 60,
+                                      height: 60,
                                     ),
-                                    width: 60,
-                                    height: 60,
-                                  ),
-                                  const Text(
-                                    'product name',
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  CustomButton(text: 'Add', onPressed: () {
-                                    
-                                  },)
-                                ],
+                                    const Text(
+                                      'product name',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    CustomButton(
+                                      text: 'Add',
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const UserCartListScreen(),
+                                            ));
+                                      },
+                                    )
+                                  ],
+                                ),
                               ),
                             )),
                   ),
-
-
                 ],
               ),
             )),

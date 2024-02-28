@@ -22,7 +22,7 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor:  KButtonColor, 
+        backgroundColor: color?? KButtonColor, 
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))// Button color
       ),
       child:  Text(text,style:  TextStyle(color: texColor ?? Colors.white),),

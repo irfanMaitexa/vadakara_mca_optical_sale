@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:optical_sale/modules/user/home/home_screen.dart';
+import 'package:optical_sale/modules/user/cart_list_screen.dart';
+import 'package:optical_sale/modules/user/home_screen.dart';
 import 'package:optical_sale/utils/constants.dart';
 
 
@@ -23,7 +24,8 @@ class _UserRootScreenState extends State<UserRootScreen> {
   final _pagesList = const [
 
     UserHomeScreen(),
-    Scaffold(),
+    UserCartListScreen(),
+   
     Scaffold(),
   
     
