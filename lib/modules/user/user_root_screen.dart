@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/user/cart_list_screen.dart';
 import 'package:optical_sale/modules/user/home_screen.dart';
+import 'package:optical_sale/modules/user/profile/user_profile_screen.dart';
+import 'package:optical_sale/modules/user/user_booking_list.dart';
 import 'package:optical_sale/utils/constants.dart';
 
 
@@ -21,12 +23,14 @@ class _UserRootScreenState extends State<UserRootScreen> {
     });
   }
 
-  final _pagesList = const [
+  final _pagesList =  [
 
     UserHomeScreen(),
+
+    UserBookingList(),
+
     UserCartListScreen(),
-   
-    Scaffold(),
+    UserProfileScreen(),
   
     
   ];
@@ -56,6 +60,10 @@ class _UserRootScreenState extends State<UserRootScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.book),
+              label: 'cart',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart),

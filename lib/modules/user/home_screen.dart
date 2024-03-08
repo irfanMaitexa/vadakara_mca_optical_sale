@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:optical_sale/modules/user/book_eye_specialist.dart';
 import 'package:optical_sale/modules/user/cart_list_screen.dart';
 import 'package:optical_sale/modules/user/product_Details_screen.dart';
 import 'package:optical_sale/modules/user/product_list_screen.dart';
@@ -125,7 +126,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     height: 50,
                     child: CustomButton(
                       text: 'Book  eye specialist',
-                      onPressed: () {},
+                      onPressed: () {
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BookEyeSpecialist(),),);
+                      },
                     ),
                   ),
 

@@ -10,6 +10,8 @@ class CustomTextField extends StatelessWidget {
   final Color ? borderColor;
   String? Function(String?)? validator;
 
+  final bool ? isEnabled;
+
    CustomTextField({
     Key? key,
     required this.hintText,
@@ -20,12 +22,13 @@ class CustomTextField extends StatelessWidget {
     this.obscureText,
     this.borderColor,
     this.validator,
+    this.isEnabled,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var outlineInputBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(25.0),
       borderSide:  BorderSide(
         color: borderColor?? Colors.white,
       ),
@@ -35,6 +38,7 @@ class CustomTextField extends StatelessWidget {
       validator: validator,
       keyboardType: input,
       obscureText: obscureText??false,
+      enabled: isEnabled,
       decoration: InputDecoration(
           hintText: hintText,
           enabledBorder: outlineInputBorder,
