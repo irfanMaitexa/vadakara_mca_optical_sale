@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/auth/user_registration.dart';
+import 'package:optical_sale/modules/doctor/doctor_home_screen.dart';
 import 'package:optical_sale/modules/staff/staff_home.dart';
 import 'package:optical_sale/modules/user/user_root_screen.dart';
 import 'package:optical_sale/utils/constants.dart';
@@ -167,6 +168,16 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => const StaffHomeScreen(),
+        ),
+        (route) => false,
+      );
+    }
+
+    if (_emailController.text.trim() == 'doctor@gmail.com') {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DoctorHomeScreen(),
         ),
         (route) => false,
       );
