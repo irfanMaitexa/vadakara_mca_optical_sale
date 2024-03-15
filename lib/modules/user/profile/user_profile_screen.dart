@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:optical_sale/modules/auth/login.dart';
 import 'package:optical_sale/modules/user/profile/user_edit_screen.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
@@ -16,6 +17,14 @@ class UserProfileScreen extends StatelessWidget {
           AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
+            actions: [
+              Text('logout'),
+              IconButton(onPressed: () {
+
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen(),), (route) => false);
+                
+              }, icon: Icon(Icons.logout),)
+            ],
           ),
           const CircleAvatar(
             radius: 100,

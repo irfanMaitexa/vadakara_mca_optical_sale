@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/auth/user_registration.dart';
+import 'package:optical_sale/modules/staff/staff_home.dart';
 import 'package:optical_sale/modules/user/user_root_screen.dart';
 import 'package:optical_sale/utils/constants.dart';
 import 'package:optical_sale/utils/validator.dart';
@@ -7,7 +8,7 @@ import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
-   LoginScreen({Key? key});
+  LoginScreen({Key? key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -150,12 +151,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
     //   }
     // });
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const UserRootScreen(),
-      ),
-      (route) => false,
-    );
+
+    if (_emailController.text.trim() == 'user@gmail.com') {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const UserRootScreen(),
+        ),
+        (route) => false,
+      );
+    }
+
+    if (_emailController.text.trim() == 'staff@gmail.com') {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const StaffHomeScreen(),
+        ),
+        (route) => false,
+      );
+    }
   }
 }

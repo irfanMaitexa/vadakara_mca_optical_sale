@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/user/book_eye_specialist.dart';
+import 'package:optical_sale/modules/user/book_service_screen.dart';
 import 'package:optical_sale/modules/user/cart_list_screen.dart';
 import 'package:optical_sale/modules/user/product_Details_screen.dart';
 import 'package:optical_sale/modules/user/product_list_screen.dart';
@@ -39,36 +40,31 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             color: Colors.white,
           ),
         ),
-        Expanded(
-            child: Container(
-                color: KButtonColor,
-                padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UserHomeScreen(),
-                      ),
-                    );
+        Container(
+          width: MediaQuery.of(context).size.width,
+          color: KButtonColor,
+          padding:
+                const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 30),
+          child: SizedBox(
+                height: 49,
+                child: CustomButton(
+                  color: Colors.white,
+                  texColor: Colors.teal,
+                  onPressed: () {
+
+                     print('fff');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BookServiceScreen(),
+                    ));
+
+                    
                   },
-                  child: SizedBox(
-                    height: 55,
-                    child: TextField(
-                      enabled: false,
-                      decoration: InputDecoration(
-                        hintText: 'Search',
-                        suffixIcon: const Icon(Icons.search),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          gapPadding: 0,
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ))),
+                  text: 'Book Service',
+                ),
+              ),
+        ),
         Expanded(
             flex: 4,
             child: SingleChildScrollView(
@@ -122,13 +118,18 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 20),
                     height: 50,
                     child: CustomButton(
                       text: 'Book  eye specialist',
                       onPressed: () {
-
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BookEyeSpecialist(),),);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookEyeSpecialist(),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -175,7 +176,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                       radius: 50,
                                     ),
                                     const Text(
-                                      'category name',
+                                      'Glases',
                                       style: TextStyle(color: Colors.white),
                                     )
                                   ],
