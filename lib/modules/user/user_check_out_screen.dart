@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:optical_sale/modules/user/add_address_screen.dart';
+import 'package:optical_sale/modules/user/payment_screen.dart';
 import 'package:optical_sale/modules/user/user_order_confirm_screen.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/utils/constants.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
@@ -12,9 +15,11 @@ class CheckOut extends StatefulWidget {
 }
 
 class _CheckOutState extends State<CheckOut> {
+  Map<String, dynamic>? address;
+  bool isPaid = false;
 
+  bool loading = false;
 
-  final _addressController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,17 +55,77 @@ class _CheckOutState extends State<CheckOut> {
                         height: 20,
                       ),
 
-                       Text('Address:',
-                style: TextStyle(
-                                  fontSize: 12, color: Colors.grey.shade800),),
-            const SizedBox(height: 10,),
-            CustomTextField(
-              controller: _addressController,
-              hintText: 'Enter Address',
-              borderColor: Colors.grey,
-            ),
+                      if (address != null) Text('Address'),
+                      if (address != null)
+                        Text(
+                            '${address!['address']},${address!['pincode']},${address!['state']}'),
+                      if (address == null)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Address:',
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.grey.shade800),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomButton(
+                              text: 'Add',
+                              onPressed: () async {
+                                address = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const UserAddAddressScreen(),
+                                    ));
+                                print(address);
+                                if (address != null) {
+                                  setState(() {});
+                                }
+                              },
+                            )
+                          ],
+                        ),
+
+                      isPaid ?
+                        Text(
+                        'payment  :   complete') :
+
+
+                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Payement',
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.grey.shade800),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomButton(
+                              text: 'select',
+                              onPressed: () async {
+                                isPaid = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const PaymentScreen(),
+                                    ));
+                               
+                                if (isPaid) {
+                                  setState(() {});
+                                }
+                              },
+                            )
+                          ],
+                        ),
+
+
                       
-                      
+
                       const SizedBox(
                         height: 15,
                       ),
@@ -324,17 +389,27 @@ class _CheckOutState extends State<CheckOut> {
                                     width: double.infinity,
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 12),
-                                    child: CustomButton(
-                                      text: 'Place Order',
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  OrderConfirmScreen(),
-                                            ));
-                                      },
-                                    ))
+                                    child: loading
+                                        ? Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.teal,
+                                            ),
+                                          )
+                                        : CustomButton(
+                                            text: 'Place Order',
+                                            onPressed: () async {
+                                              setState(() {
+                                                loading = true;
+                                              });
+
+                                              await ApiServiece()
+                                                  .placeOrder(context);
+
+                                              setState(() {
+                                                loading = false;
+                                              });
+                                            },
+                                          ))
                               ],
                             ),
                           ),

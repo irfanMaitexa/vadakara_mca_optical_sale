@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:optical_sale/modules/user/cart_list_screen.dart';
+import 'package:optical_sale/modules/user/user_order_confirm_screen.dart';
 import 'package:optical_sale/service/db_service.dart';
 
 class ApiServiece {
@@ -133,6 +135,138 @@ class ApiServiece {
       throw Exception('Failed to load doctors');
     }
   }
-  
 
+  //add cart
+
+  Future<void> addToCart(BuildContext context, String loginId, String productId,
+      String price) async {
+    try {
+      var url = Uri.parse('$baseUrl/api/user/add-cart/$loginId/$productId');
+
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: <String, String>{
+          'price': price,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Item added'),
+              action: SnackBarAction(
+                label: 'go to cart',
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserCartListScreen(),
+                      ));
+                },
+              ),
+            ),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to add item to cart'),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error adding item to cart: $e'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> addUserAddress(
+      String loginId, Map<String, dynamic> data, BuildContext context) async {
+    final url = Uri.parse('$baseUrl/api/user/add-address/$loginId');
+
+    print(url);
+    try {
+      final response = await http.post(
+        url,
+        body: data,
+      );
+
+      if (response.statusCode == 201) {
+        // Request successful
+        var data = jsonDecode(response.body)['data'];
+
+        Navigator.pop(context, data);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Address added successfully')),
+        );
+      } else {
+        // Request failed
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Failed to add address. Please try again later.')),
+        );
+      }
+    } catch (e) {
+      // Exception occurred
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'An error occurred while adding the address. Please try again later.')),
+      );
+    }
+  }
+
+//place order
+
+  Future<void> placeOrder(BuildContext context) async {
+    try {
+      var url = Uri.parse(
+          '$baseUrl/api/user/place-order-prod/${DbService.getLoginId()}');
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      );
+
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Order placed sccessfully')),
+          );
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OrderConfirmScreen(),
+              ));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Error placing order. Please try again later.')),
+        );
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error placing order. Please try again later.')),
+      );
+    }
+  }
 }

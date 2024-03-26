@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/user/cart_list_screen.dart';
 import 'package:optical_sale/modules/user/product_Details_screen.dart';
 import 'package:optical_sale/service/api_services.dart';
+import 'package:optical_sale/service/db_service.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
 class ProductListNew extends StatefulWidget {
@@ -14,6 +15,8 @@ class ProductListNew extends StatefulWidget {
 }
 
 class _ProductListNewState extends State<ProductListNew> {
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,10 +65,13 @@ class _ProductListNewState extends State<ProductListNew> {
                 var product = products[index];
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => UserProductDetailsScreen(
-                      name: product['brand'],
-                      imageUrl: product['image'],
-                    ),));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserProductDetailsScreen(
+                            productDetails: product,
+                          ),
+                        ));
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -94,27 +100,31 @@ class _ProductListNewState extends State<ProductListNew> {
                                 Text(
                                   product['brand'],
                                   style: const TextStyle(
-                                      fontSize: 13, fontWeight: FontWeight.w600),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600),
                                 ),
                                 const SizedBox(
                                   height: 5,
                                 ),
-                                 SizedBox(
+                                SizedBox(
                                   width: 120,
                                   child: Text(
                                     product['description'],
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 3,
                                     style: TextStyle(
-                                        fontSize: 13, fontWeight: FontWeight.w600),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                 ),
                                 const Spacer(),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           '₹${product['price']}',
@@ -140,15 +150,20 @@ class _ProductListNewState extends State<ProductListNew> {
                                             ),
                                           ],
                                         ),
-                                        child: CustomButton(
+                                        child: 
+                                        
+                                         CustomButton(
                                           text: 'Add',
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => const UserCartListScreen(),
-                                              ),
-                                            );
+                                          onPressed: () async {
+
+                                           print(DbService.getLoginId());
+                                           
+                                            await ApiServiece().addToCart(
+                                                context,
+                                                DbService.getLoginId()!,
+                                                product['_id'],
+                                                product['price'].toString());
+                                            
                                           },
                                         ),
                                       ),
@@ -175,4 +190,3 @@ class _ProductListNewState extends State<ProductListNew> {
     );
   }
 }
-

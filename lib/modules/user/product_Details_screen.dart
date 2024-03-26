@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/user/cart_list_screen.dart';
+import 'package:optical_sale/service/api_services.dart';
+import 'package:optical_sale/service/db_service.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
 class UserProductDetailsScreen extends StatelessWidget {
-  const UserProductDetailsScreen(
-      {super.key, required this.name, required this.imageUrl});
+  const UserProductDetailsScreen({Key? key, required this.productDetails}) : super(key: key);
 
-  final String name;
-  final String imageUrl;
+  final Map<String, dynamic> productDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class UserProductDetailsScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Image(
-                    image: NetworkImage(imageUrl),
+                    image: NetworkImage(productDetails['image']),
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -37,65 +37,70 @@ class UserProductDetailsScreen extends StatelessWidget {
               height: 10,
             ),
             Expanded(
-                child: Card(
-              elevation: .6,
-              color: Colors.white,
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Description',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Divider(
-                      color: Colors.grey.shade300,
-                      thickness: .6,
-                      indent: 10,
-                      endIndent: 10,
-                    ),
-                    Expanded(
-                        child: const Text(
-                      'Sunglasses are stylish eyewear designed to protect the eyes from sunlight and UV rays. They come in various shapes, sizes, and colors to suit different face shapes and fashion preferences. With their tinted lenses, sunglasses reduce glare and improve visual comfort outdoors.',
-                      style: TextStyle(fontSize: 14),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 6,
-                    )),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Price',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        Text(
-                          '100',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: CustomButton(
-                        text: 'Add to Cart',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const UserCartListScreen(),
-                            ),
-                          );
-                        },
+              child: Card(
+                elevation: .6,
+                color: Colors.white,
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Description',
+                        style: TextStyle(fontSize: 18),
                       ),
-                    )
-                  ],
+                      Divider(
+                        color: Colors.grey.shade300,
+                        thickness: .6,
+                        indent: 10,
+                        endIndent: 10,
+                      ),
+                      Expanded(
+                        child: Text(
+                          productDetails['description'],
+                          style: TextStyle(fontSize: 14),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 6,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Price',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Text(
+                            '${productDetails['price']}',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: CustomButton(
+                          text: 'Add to Cart',
+                          onPressed: () async{
+
+                            ApiServiece().addToCart(
+                              context, DbService.getLoginId()!,
+                              productDetails['_id'],
+                              productDetails['price'].toString()
+                               );
+
+
+                            
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ))
+            )
           ],
         ),
       ),

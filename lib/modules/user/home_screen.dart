@@ -211,15 +211,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         itemCount: categoryList.length,
                         itemBuilder: (context, index) => GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          UserProductDetailsScreen(
-                                        name: 'name',
-                                        imageUrl: popularProduct[index],
-                                      ),
-                                    ));
+                                
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(10),

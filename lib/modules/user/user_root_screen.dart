@@ -4,6 +4,7 @@ import 'package:optical_sale/modules/user/cart_list_screen.dart';
 import 'package:optical_sale/modules/user/home_screen.dart';
 import 'package:optical_sale/modules/user/profile/user_profile_screen.dart';
 import 'package:optical_sale/modules/user/user_booking_list.dart';
+import 'package:optical_sale/service/db_service.dart';
 import 'package:optical_sale/utils/constants.dart';
 
 
@@ -27,7 +28,7 @@ class _UserRootScreenState extends State<UserRootScreen> {
 
     UserHomeScreen(),
 
-    UserBookingList(),
+    UserBookingList(loginId: DbService.getLoginId()!,),
 
     UserCartListScreen(),
     UserProfileScreen(),
