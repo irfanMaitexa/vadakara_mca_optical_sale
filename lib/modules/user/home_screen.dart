@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/user/book_eye_specialist.dart';
 import 'package:optical_sale/modules/user/book_service_screen.dart';
 import 'package:optical_sale/modules/user/cart_list_screen.dart';
+import 'package:optical_sale/modules/user/doctors_list_screen.dart';
 import 'package:optical_sale/modules/user/product_Details_screen.dart';
 import 'package:optical_sale/modules/user/product_list_screen.dart';
 import 'package:optical_sale/utils/constants.dart';
@@ -20,6 +21,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     'https://e7.pngegg.com/pngimages/299/791/png-clipart-sunglasses-eyewear-glasses-black-glasses-thumbnail.png',
     'https://img.freepik.com/free-photo/sunglasses_1203-8703.jpg?size=626&ext=jpg&ga=GA1.1.1672774589.1699860837&semt=ais',
     'https://img.freepik.com/free-photo/sunglasses_1203-8703.jpg?size=626&ext=jpg&ga=GA1.1.1672774589.1699860837&semt=ais'
+  ];
+
+  final catNameList = [
+    'sunglass',
+    'lens',
+    'frame'
+
   ];
 
   final popularProduct = [
@@ -127,7 +135,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BookEyeSpecialist(),
+                            builder: (context) => DoctorListScreen(),
                           ),
                         );
                       },
@@ -157,8 +165,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const ProductListNew(
-                                        name: 'sun glass',
+                                           ProductListNew(
+                                        name: catNameList[index],
                                       ),
                                     ));
                               },
@@ -175,9 +183,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                           NetworkImage(categoryList[index]),
                                       radius: 50,
                                     ),
-                                    const Text(
-                                      'Glases',
-                                      style: TextStyle(color: Colors.white),
+                                     Text(
+                                      catNameList[index],
+                                      style: const  TextStyle(color: Colors.white),
                                     )
                                   ],
                                 ),

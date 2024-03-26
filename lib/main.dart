@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/auth/login.dart';
+import 'package:optical_sale/service/db_service.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await DbService.init();
   runApp(const MyApp());
 }
 

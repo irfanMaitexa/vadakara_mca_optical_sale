@@ -3,6 +3,7 @@ import 'package:optical_sale/modules/auth/user_registration.dart';
 import 'package:optical_sale/modules/doctor/doctor_home_screen.dart';
 import 'package:optical_sale/modules/staff/staff_home.dart';
 import 'package:optical_sale/modules/user/user_root_screen.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/utils/constants.dart';
 import 'package:optical_sale/utils/validator.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
@@ -28,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? emailError;
   String? passwordError;
+  bool  loading =  false;
 
   @override
   void dispose() {
@@ -99,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                SizedBox(
+               loading ?  Center(child: CircularProgressIndicator(),)  : SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: 50,
                   child: CustomButton(
@@ -146,14 +148,20 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _loginHandler() {
-    // setState(() {
-    //   if(_formKey.currentState!.validate()){
+  void _loginHandler() async{
+    
+      if(_formKey.currentState!.validate()){
 
-    //   }
-    // });
 
-    if (_emailController.text.trim() == 'user@gmail.com') {
+        try{
+
+          setState(() {
+            loading = true;
+          });
+
+          var role =  await ApiServiece().loginUser(_emailController.text, _passwordController.text, context);
+            print(role);
+         if (role == 2) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -163,24 +171,69 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
 
-    if (_emailController.text.trim() == 'staff@gmail.com') {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const StaffHomeScreen(),
-        ),
-        (route) => false,
-      );
-    }
+         
+         
+         
+         
+         
+          setState(() {
+            loading = false;
+          });
+        
+        
+        }catch(e){
 
-    if (_emailController.text.trim() == 'doctor@gmail.com') {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const DoctorHomeScreen(),
-        ),
-        (route) => false,
-      );
-    }
+          setState(() {
+            loading = false;
+          });
+
+
+           if(context.mounted){
+            ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(content: Text('Somthing went wronng')));
+           }
+
+
+          
+        }
+
+
+
+
+
+    
+
+      }
+    
+
+    // if (_emailController.text.trim() == 'user@gmail.com') {
+    //   Navigator.pushAndRemoveUntil(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => const UserRootScreen(),
+    //     ),
+    //     (route) => false,
+    //   );
+    // }
+
+    // if (_emailController.text.trim() == 'staff@gmail.com') {
+    //   Navigator.pushAndRemoveUntil(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => const StaffHomeScreen(),
+    //     ),
+    //     (route) => false,
+    //   );
+    // }
+
+    // if (_emailController.text.trim() == 'doctor@gmail.com') {
+    //   Navigator.pushAndRemoveUntil(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => const DoctorHomeScreen(),
+    //     ),
+    //     (route) => false,
+    //   );
+    // }
   }
 }

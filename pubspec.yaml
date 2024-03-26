@@ -38,6 +38,8 @@ dependencies:
   flutter_rounded_date_picker: ^3.0.4
   qr_flutter: ^4.1.0
   image_picker: ^1.0.7
+  http: 
+  shared_preferences: ^2.2.2
   
 
 dev_dependencies:

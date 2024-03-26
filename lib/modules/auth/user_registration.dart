@@ -1,16 +1,14 @@
-
 import 'package:flutter/material.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/utils/validator.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
-
 
 class UserRegistrationScreen extends StatefulWidget {
   const UserRegistrationScreen({super.key});
 
   @override
-  State<UserRegistrationScreen> createState() =>
-      _UserRegistrationScreenState();
+  State<UserRegistrationScreen> createState() => _UserRegistrationScreenState();
 }
 
 class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
@@ -25,6 +23,8 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _userRegisterFormKey = GlobalKey<FormState>();
+
+  bool  loading =  false;
 
   @override
   void dispose() {
@@ -72,16 +72,15 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                   controller: _phoneControllers,
                   input: TextInputType.number,
                   borderColor: Colors.grey.shade300,
-                   validator: (value) => fieldValidate(value, 'phone'),
+                  validator: (value) => fieldValidate(value, 'phone'),
                 ),
                 const SizedBox(height: 30),
                 CustomTextField(
                   hintText: 'Enter email',
                   controller: _emailController,
-                
-                  input: TextInputType.number,
+                  input: TextInputType.emailAddress,
                   borderColor: Colors.grey.shade300,
-                   validator: (value) => validateEmail(value),
+                  validator: (value) => validateEmail(value),
                 ),
                 const SizedBox(height: 30),
                 CustomTextField(
@@ -107,10 +106,9 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                   hintText: 'Confirm password',
                   controller: _confirmPasswordController,
                   borderColor: Colors.grey.shade300,
-                  
                 ),
                 const SizedBox(height: 30),
-                SizedBox(
+                loading ?  const Center(child: CircularProgressIndicator(color: Colors.teal,),) : SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: CustomButton(
                     text: 'SIGN UP',
@@ -127,16 +125,36 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
     );
   }
 
-  _signUpHandler(BuildContext context) {
-    setState(() {
-      
+  _signUpHandler(BuildContext context) async{
+  
       if (_userRegisterFormKey.currentState!.validate()) {
         if (_passwordController.text == _confirmPasswordController.text) {
+          try {
+            setState(() {
+              loading = true;
+            });
+            await  ApiServiece().registerUser(
+                _nameControllers.text,
+                _emailController.text,
+                _phoneControllers.text,
+                _passwordController.text,context);
+
+          Navigator.pop(context);
+          setState(() {
+              loading = false;
+            });
+          } catch (e) {
+            setState(() {
+              loading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Somthing went wrong')));
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Password not match')));
         }
-      } 
-    });
+      }
+    
   }
 }
