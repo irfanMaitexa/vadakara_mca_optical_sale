@@ -3,26 +3,27 @@ import 'package:flutter/material.dart';
 class ItemCard extends StatefulWidget {
   final String name;
   final String imageUrl;
+   int quantity;
 
-  ItemCard({required this.name, required this.imageUrl});
+  ItemCard({required this.name, required this.imageUrl,required this.quantity});
 
   @override
   _ItemCardState createState() => _ItemCardState();
 }
 
 class _ItemCardState extends State<ItemCard> {
-  int _quantity = 0;
+  
 
   void _increment() {
     setState(() {
-      _quantity++;
+      widget.quantity++;
     });
   }
 
   void _decrement() {
     setState(() {
-      if (_quantity > 0) {
-        _quantity--;
+      if (widget.quantity > 0) {
+        widget.quantity--;
       }
     });
   }
@@ -60,7 +61,7 @@ class _ItemCardState extends State<ItemCard> {
                     onPressed: _decrement,
                   ),
                   Text(
-                    '$_quantity',
+                    '${widget.quantity}',
                     style: const TextStyle(fontSize: 16.0),
                   ),
                   IconButton(

@@ -269,4 +269,97 @@ class ApiServiece {
       );
     }
   }
+
+
+    Future<List<dynamic>> fetchUserOrdes() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/user/view-order/${DbService.getLoginId()}'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      print(jsonData);
+      final List<dynamic> data = jsonData['Data'];
+      return data;
+    } else {
+      throw Exception('Failed to load appointments');
+    }
+  }
+
+  //
+    Future<List<dynamic>> fetchCartItems(String loginId) async {
+    final url = Uri.parse('$baseUrl/api/user/view-cart/$loginId');
+    final response = await http.get(url);
+
+    
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      
+      return jsonData['data'];
+    } else {
+      throw Exception('Failed to load cart items');
+    }
+  }
+
+  //fetch 
+  Future<List<dynamic>> fetchDocBookings(String loginId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/user/view-doc-booking/$loginId'),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  //doc booking
+
+  Future<void> bookDoctor(BuildContext context, String url, Map<String, String> data) async {
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: data,
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('POST request successful'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to make POST request. Status code: ${response.statusCode}'),
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error making POST request: $e'),
+      ),
+    );
+  }
+}
+
+ //fetch all product
+ Future<List<dynamic>> fetchAllProduct() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/view-prod'),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+
 }

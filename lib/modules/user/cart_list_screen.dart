@@ -1,25 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:optical_sale/modules/user/user_check_out_screen.dart';
+import 'package:optical_sale/service/api_services.dart';
+import 'package:optical_sale/service/db_service.dart';
+import 'dart:convert';
+
 import 'package:optical_sale/widgets/cart_item_card.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
 class UserCartListScreen extends StatefulWidget {
-  const UserCartListScreen({super.key});
+  const UserCartListScreen({Key? key}) : super(key: key);
 
   @override
   State<UserCartListScreen> createState() => _UserCartListScreenState();
 }
 
 class _UserCartListScreenState extends State<UserCartListScreen> {
+  late Future<List<dynamic>> _cartItems;
 
-
-@override
+  @override
   void initState() {
+    _cartItems = ApiServiece().fetchCartItems(DbService.getLoginId()!);
+    getData();
 
-    print('ffff');
-    
+
     super.initState();
   }
+
+  double total = 0;
+
+  getData() async{
+
+    
+
+    List  cartitemsList = await ApiServiece().fetchCartItems(DbService.getLoginId()!);
+   
+   cartitemsList.forEach((element) {
+
+    total =  double.parse(element['subtotal'].toString()) + total;
+
+    setState(() {
+      
+    });
+    
+
+   });
+
+    
+
+  }
+
+  
+
+  
+
+  
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +84,7 @@ class _UserCartListScreenState extends State<UserCartListScreen> {
                       fontWeight: FontWeight.w800),
                 ),
                 Text(
-                  '₹100',
+                  '₹$total',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -62,7 +100,6 @@ class _UserCartListScreenState extends State<UserCartListScreen> {
               child: CustomButton(
                 text: 'Check Out',
                 onPressed: () {
-                  print('fffffff');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -75,15 +112,37 @@ class _UserCartListScreenState extends State<UserCartListScreen> {
           ],
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: ListView.builder(
-          itemBuilder: (context, index) => ItemCard(
-            name: 'sun glass',
-            imageUrl:
-                'https://img.freepik.com/free-photo/sunglasses_1203-8703.jpg?size=626&ext=jpg&ga=GA1.1.1672774589.1699860837&semt=ais',
-          ),
-        ),
+      body: FutureBuilder<List<dynamic>>(
+        future: _cartItems,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+
+            print(snapshot.data?.length);
+            final cartItems = snapshot.data!;
+
+
+
+            
+              
+
+            return ListView.builder(
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                 
+                final item = cartItems[index];
+                return ItemCard(
+                  name: item['brand'],
+                  imageUrl: item['image'],
+                  quantity: item['quantity']
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

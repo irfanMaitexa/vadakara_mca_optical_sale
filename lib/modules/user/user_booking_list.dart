@@ -1,13 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:optical_sale/service/api_services.dart';
+import 'package:optical_sale/service/db_service.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
 class UserBookingList extends StatefulWidget {
   final String loginId;
 
-  UserBookingList({required this.loginId});
+  UserBookingList({Key? key, required this.loginId}) : super(key: key);
 
   @override
   _UserBookingListState createState() => _UserBookingListState();
@@ -15,70 +14,108 @@ class UserBookingList extends StatefulWidget {
 
 class _UserBookingListState extends State<UserBookingList> {
   late Future<List<dynamic>> futureAppointments;
+  late Future<List<dynamic>> futureDocServiceList;
 
   @override
   void initState() {
     super.initState();
-    futureAppointments = fetchAppointments();
-  }
-
-  Future<List<dynamic>> fetchAppointments() async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/api/user/view-order/${widget.loginId}'),
-    );
-
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-
-      print(jsonData);
-      final List<dynamic> data = jsonData['Data'];
-      return data;
-    } else {
-      throw Exception('Failed to load appointments');
-    }
+    futureDocServiceList =
+        ApiServiece().fetchDocBookings(DbService.getLoginId()!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Booking List'),
-      ),
-      body: FutureBuilder<List<dynamic>>(
-        future: futureAppointments,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('User Booking List'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Orders'),
+              Tab(text: 'Service Booking'),
+              Tab(text: 'Doctor Booking'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            ListView.builder(
+              itemCount: 10,
               itemBuilder: (context, index) {
-                final appointment = snapshot.data![index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.teal),
                     ),
                     child: ListTile(
-                      leading: Icon(Icons.event),
-                      title: Text('${appointment['products_data']['brand']} ${appointment['products_data']['model']}'),
-                      subtitle: Text('Price: ${appointment['price']}'),
+                      leading: const Icon(Icons.event),
+                      title: const Text('Product'),
+                      subtitle: const Text('Price:'),
                       trailing: CustomButton(
-                        onPressed: () {
-                         
-                        },
+                        onPressed: () {},
                         text: 'View More',
                       ),
                     ),
                   ),
                 );
               },
-            );
-          }
-        },
+            ),
+
+            // Placeholder for Service Booking tab
+            const Center(child: Text('Service Booking Tab')),
+            // Placeholder for Doctor Booking tab
+
+            FutureBuilder<List<dynamic>>(
+                future: futureDocServiceList,
+                builder: (context, snapshot) {
+
+                
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                     
+                    return const Center(child: CircularProgressIndicator(color: Colors.teal,));
+                  } else if (snapshot.hasError) {
+                   
+                     
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+
+                    
+                    return snapshot.data!.length == 0 ?Center(child: Text('no  data'),) :
+                    ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                       
+
+                        
+                        final appointment = snapshot.data![index];
+                      
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 20),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.teal),
+                            ),
+                            child: ListTile(
+                              leading: const Icon(Icons.event),
+                              title: const Text('Product'),
+                              subtitle: const Text('Price:'),
+                              trailing: CustomButton(
+                                onPressed: () {},
+                                text: 'View More',
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                })
+          ],
+        ),
       ),
     );
   }

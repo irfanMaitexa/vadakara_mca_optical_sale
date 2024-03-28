@@ -6,6 +6,8 @@ import 'package:optical_sale/modules/user/cart_list_screen.dart';
 import 'package:optical_sale/modules/user/doctors_list_screen.dart';
 import 'package:optical_sale/modules/user/product_Details_screen.dart';
 import 'package:optical_sale/modules/user/product_list_screen.dart';
+import 'package:optical_sale/service/api_services.dart';
+import 'package:optical_sale/service/db_service.dart';
 import 'package:optical_sale/utils/constants.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
@@ -18,17 +20,12 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   final categoryList = [
-    'https://e7.pngegg.com/pngimages/299/791/png-clipart-sunglasses-eyewear-glasses-black-glasses-thumbnail.png',
     'https://img.freepik.com/free-photo/sunglasses_1203-8703.jpg?size=626&ext=jpg&ga=GA1.1.1672774589.1699860837&semt=ais',
-    'https://img.freepik.com/free-photo/sunglasses_1203-8703.jpg?size=626&ext=jpg&ga=GA1.1.1672774589.1699860837&semt=ais'
+    'https://media.istockphoto.com/id/167201445/photo/eyeglasses-lenses.jpg?s=612x612&w=0&k=20&c=1c77nbfya0uJrB8JgizJzkI30VaD620ae0gxVJlHzHw=',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEX8mag8e19nKBnKr2iLF3rn3a0-YyIW049Q&usqp=CAU',
   ];
 
-  final catNameList = [
-    'sunglass',
-    'lens',
-    'frame'
-
-  ];
+  final catNameList = ['sunglass', 'lens', 'frame'];
 
   final popularProduct = [
     'https://e7.pngegg.com/pngimages/299/791/png-clipart-sunglasses-eyewear-glasses-black-glasses-thumbnail.png',
@@ -52,26 +49,23 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           width: MediaQuery.of(context).size.width,
           color: KButtonColor,
           padding:
-                const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 30),
+              const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 30),
           child: SizedBox(
-                height: 49,
-                child: CustomButton(
-                  color: Colors.white,
-                  texColor: Colors.teal,
-                  onPressed: () {
-
-                     print('fff');
+            height: 49,
+            child: CustomButton(
+              color: Colors.white,
+              texColor: Colors.teal,
+              onPressed: () {
+                print('fff');
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => BookServiceScreen(),
                     ));
-
-                    
-                  },
-                  text: 'Book Service',
-                ),
-              ),
+              },
+              text: 'Book Service',
+            ),
+          ),
         ),
         Expanded(
             flex: 4,
@@ -96,8 +90,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         viewportFraction: 1,
                       ),
                       items: [
-                        'https://img.freepik.com/free-photo/mechanic-repairing-bicycle_23-2148138617.jpg?w=1380&t=st=1708497923~exp=1708498523~hmac=db0aa97cb4ebd6cb6b1a4e4f5a8da5d25d20e4a8be9b4bb5abeb10a7cbbcc7d0',
-                        'https://img.freepik.com/free-photo/mechanic-repairing-bicycle_23-2148138617.jpg?w=1380&t=st=1708497923~exp=1708498523~hmac=db0aa97cb4ebd6cb6b1a4e4f5a8da5d25d20e4a8be9b4bb5abeb10a7cbbcc7d0'
+                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-qrr9hN7mx4PugAh4vLAkACdDBSjbs3NFgA&usqp=CAU'
                       ].map((i) {
                         return Builder(
                           builder: (BuildContext context) {
@@ -164,8 +157,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                           ProductListNew(
+                                      builder: (context) => ProductListNew(
                                         name: catNameList[index],
                                       ),
                                     ));
@@ -183,9 +175,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                           NetworkImage(categoryList[index]),
                                       radius: 50,
                                     ),
-                                     Text(
+                                    Text(
                                       catNameList[index],
-                                      style: const  TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     )
                                   ],
                                 ),
@@ -203,51 +196,65 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ),
                   ),
 
-                  Container(
-                    height: 150,
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: categoryList.length,
-                        itemBuilder: (context, index) => GestureDetector(
-                              onTap: () {
-                                
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                margin: const EdgeInsets.only(left: 10),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: KButtonColor),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Column(
-                                  children: [
-                                    Image(
-                                      image: NetworkImage(
-                                        popularProduct[index],
-                                      ),
-                                      width: 60,
-                                      height: 60,
-                                    ),
-                                    const Text(
-                                      'product name',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    CustomButton(
-                                      text: 'Add',
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const UserCartListScreen(),
-                                            ));
-                                      },
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )),
+                  FutureBuilder(
+      future: ApiServiece().fetchAllProduct(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          List<dynamic> productList = snapshot.data as List<dynamic>;
+          return Container(
+            height: 150,
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: productList.length,
+              itemBuilder: (context, index) {
+                var product = productList[index];
+                print(product);
+                return GestureDetector(
+
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.network(
+                          product['image'],
+                          width: 60,
+                          height: 60,
+                        ),
+                        Text(
+                          product['brand'],
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        CustomButton(
+                          text: 'Add',
+                          onPressed: () {
+                            ApiServiece().addToCart(
+                              context,
+                              DbService.getLoginId()!
+                               , product['_id'], product['price'].toString());
+                          },
+                        )
+                      ],
+                    ),
                   ),
+                );
+              },
+            ),
+          );
+        }
+      },
+    )
+              
                 ],
               ),
             )),
