@@ -317,26 +317,29 @@ class ApiServiece {
 
   //doc booking
 
-  Future<void> bookDoctor(BuildContext context, String url, Map<String, String> data) async {
+  Future<void> bookDoctor(BuildContext context,String docId,String date) async {
   try {
     final response = await http.post(
-      Uri.parse(url),
+      Uri.parse('$baseUrl/api/user/doctor-booking/${DbService.getLoginId()}/$docId'),
       headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: data,
+      body: {
+        'date': date,
+      
+      },
     );
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('POST request successful'),
+          content: Text('successful'),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to make POST request. Status code: ${response.statusCode}'),
+          content: Text('Failed'),
         ),
       );
     }
@@ -360,6 +363,42 @@ class ApiServiece {
       throw Exception('Failed to load data');
     }
   }
+
+  //book service
+  Future<void> bookService(BuildContext context, String loginId, String date, String complaint) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/user/service-booking/$loginId'),
+      headers: <String, String>{
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'date': date,
+        'complaint': complaint,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Service booking successful'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to make service booking. Status code: ${response.statusCode}'),
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error making service booking: $e'),
+      ),
+    );
+  }
+}
 
 
 }

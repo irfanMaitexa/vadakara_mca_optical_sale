@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:optical_sale/modules/user/book_eye_specialist.dart';
 
 
 import 'package:optical_sale/service/api_services.dart';
@@ -41,35 +42,9 @@ class DoctorListScreen extends StatelessWidget {
                     subtitle: Text(doctor['email']),
                     trailing: CustomButton(
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Enter Something'),
-                              content: const TextField(
-                                decoration:
-                                    InputDecoration(hintText: 'Type here...'),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('CANCEL'),
-                                ),
-                                CustomButton(
-                                  text: 'Book',
-                                  onPressed: () {
-                                    ApiServiece().bookDoctor(
-                                        context,
-                                        '${ApiServiece().baseUrl}/api/user/doctor-booking/${DbService.getLoginId()}/$doctor',
-                                        {'date': '28-03-2024'});
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  BookEyeSpecialist(docId: doctor['_id'])));
+                      
                       },
                       text: 'Book Now',
                     ),

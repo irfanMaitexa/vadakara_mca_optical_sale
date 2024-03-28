@@ -4,7 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:optical_sale/modules/user/doctor_booking_confirmation.dart';
+import 'package:optical_sale/service/api_services.dart';
+import 'package:optical_sale/service/db_service.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
 
@@ -22,8 +25,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
 
   DateTime? newDateTime;
 
-
-   final ImagePicker picker = ImagePicker();
+  final ImagePicker picker = ImagePicker();
   XFile? image;
 
   void _getFromCamera() async {
@@ -34,6 +36,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
     image = await picker.pickImage(source: ImageSource.gallery);
   }
 
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +47,14 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
       bottomSheet: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: CustomButton(
-                      text: 'Submit',
-                      onPressed: () {
-                        _submit();
-                      },
-                    ),
-                  ),
+          width: MediaQuery.of(context).size.width,
+          child: CustomButton(
+            text: 'Submit',
+            onPressed: () {
+              _submit();
+            },
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -61,103 +64,96 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-
-                 Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                            fixedSize: const Size(150, 50)),
-                        onPressed: () {
-                          showModalBottomSheet(
-                            backgroundColor: Colors.transparent,
-                            context: context,
-                            builder: (context) => Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    OutlinedButton(
-                                        style: OutlinedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                50)),
-                                        onPressed: () {
-                                          _getFromCamera();
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.camera_alt_outlined),
-                                            Text("Take a photo")
-                                          ],
-                                        )),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    OutlinedButton(
-                                        style: OutlinedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                50)),
-                                        onPressed: () {
-                                          _getFromgallary();
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(CupertinoIcons
-                                                .photo_on_rectangle),
-                                            Text("Upload from gallary")
-                                          ],
-                                        )),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: const Text("Add photo")),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        print(image!.path);
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: image == null
-                                ? const Text("upload image")
-                                : Image(image: FileImage(File(image!.path))),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        CupertinoIcons.eye,
-                        size: 30,
-                      ))
-                ],
-              ),
-              
-             
-             
-
-
+                //    Row(
+                //   children: [
+                //     Expanded(
+                //       child: OutlinedButton(
+                //           style: OutlinedButton.styleFrom(
+                //               fixedSize: const Size(150, 50)),
+                //           onPressed: () {
+                //             showModalBottomSheet(
+                //               backgroundColor: Colors.transparent,
+                //               context: context,
+                //               builder: (context) => Container(
+                //                 width: MediaQuery.of(context).size.width,
+                //                 child: Padding(
+                //                   padding: const EdgeInsets.all(20.0),
+                //                   child: Column(
+                //                     mainAxisSize: MainAxisSize.min,
+                //                     children: [
+                //                       OutlinedButton(
+                //                           style: OutlinedButton.styleFrom(
+                //                               backgroundColor: Colors.white,
+                //                               fixedSize: Size(
+                //                                   MediaQuery.of(context)
+                //                                       .size
+                //                                       .width,
+                //                                   50)),
+                //                           onPressed: () {
+                //                             _getFromCamera();
+                //                             Navigator.pop(context);
+                //                           },
+                //                           child: const Row(
+                //                             mainAxisAlignment:
+                //                                 MainAxisAlignment.center,
+                //                             children: [
+                //                               Icon(Icons.camera_alt_outlined),
+                //                               Text("Take a photo")
+                //                             ],
+                //                           )),
+                //                       const SizedBox(
+                //                         height: 5,
+                //                       ),
+                //                       OutlinedButton(
+                //                           style: OutlinedButton.styleFrom(
+                //                               backgroundColor: Colors.white,
+                //                               fixedSize: Size(
+                //                                   MediaQuery.of(context)
+                //                                       .size
+                //                                       .width,
+                //                                   50)),
+                //                           onPressed: () {
+                //                             _getFromgallary();
+                //                             Navigator.pop(context);
+                //                           },
+                //                           child: const Row(
+                //                             mainAxisAlignment:
+                //                                 MainAxisAlignment.center,
+                //                             children: [
+                //                               Icon(CupertinoIcons
+                //                                   .photo_on_rectangle),
+                //                               Text("Upload from gallary")
+                //                             ],
+                //                           )),
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //             );
+                //           },
+                //           child: const Text("Add photo")),
+                //     ),
+                //     const SizedBox(
+                //       width: 10,
+                //     ),
+                //     IconButton(
+                //         onPressed: () {
+                //           print(image!.path);
+                //           showDialog(
+                //             context: context,
+                //             builder: (context) => AlertDialog(
+                //               title: image == null
+                //                   ? const Text("upload image")
+                //                   : Image(image: FileImage(File(image!.path))),
+                //             ),
+                //           );
+                //         },
+                //         icon: const Icon(
+                //           CupertinoIcons.eye,
+                //           size: 30,
+                //         ))
+                //   ],
+                // ),
 
                 const SizedBox(
                   height: 20,
@@ -189,31 +185,32 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                 const SizedBox(
                   height: 20,
                 ),
+                // const Text(
+                //   'Name',
+                //   style: TextStyle(color: Colors.black, fontSize: 16),
+                // ),
+                // const SizedBox(
+                //   height: 10,
+                // ),
+                // CustomTextField(
+                //   hintText: 'Name',
+                //   controller: _nameController,
+                //   borderColor: Colors.grey,
+                // ),
                 const Text(
-                  'Name',
+                  'Complaint',
                   style: TextStyle(color: Colors.black, fontSize: 16),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 CustomTextField(
-                  hintText: 'Name',
-                  controller: _nameController,
-                  borderColor: Colors.grey,
-                ),
-                const Text(
-                  'Descrption',
-                  style: TextStyle(color: Colors.black, fontSize: 16),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomTextField(
-                  hintText: 'Add Descrption',
+                  hintText: 'Add Complaint',
                   controller: _description,
                   borderColor: Colors.grey,
+                  maxLines: 20,
+                  minLines: 7,
                 ),
-                
               ],
             ),
           ),
@@ -222,12 +219,32 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
     );
   }
 
-  _submit() {
-    Navigator.push(
+  _submit() async{
+
+    setState(() {
+      loading = true;
+    });
+
+
+    final date = DateFormat('dd-MM-yyyy').format(newDateTime!);
+   await ApiServiece()
+        .bookService(
+          context, 
+          DbService.getLoginId()!, 
+          date, 
+          _description.text,
+
+          );
+    if(context.mounted){
+      Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const DoctorBookingConfirmScreen(),
       ),
     );
+    }
+    setState(() {
+      loading = false;
+    });
   }
 }

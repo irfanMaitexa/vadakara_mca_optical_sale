@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:optical_sale/modules/user/doctor_booking_confirmation.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
 
 class BookEyeSpecialist extends StatefulWidget {
-  const BookEyeSpecialist({super.key});
+  const BookEyeSpecialist({super.key, required this.docId});
+
+  final String docId;
 
   @override
   State<BookEyeSpecialist> createState() => _BookEyeSpecialistState();
@@ -17,6 +21,8 @@ class _BookEyeSpecialistState extends State<BookEyeSpecialist> {
   final _ageController = TextEditingController();
 
   DateTime? newDateTime;
+
+  bool loading =  false;
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +95,7 @@ class _BookEyeSpecialistState extends State<BookEyeSpecialist> {
                 const SizedBox(
                   height: 20,
                 ),
-                SizedBox(
+                loading ?  Center(child: CircularProgressIndicator(color: Colors.teal,),)  : SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: CustomButton(
                     text: 'Submit',
@@ -109,7 +115,29 @@ class _BookEyeSpecialistState extends State<BookEyeSpecialist> {
     );
   }
 
-  _submit() {
+  _submit() async{
+
+    setState(() {
+      loading = true;
+    });
+
+    String date =  DateFormat('dd-MM-yyyy').format(newDateTime!);
+
+    
+
+    
+
+    await ApiServiece().bookDoctor(
+      context,
+      widget.docId,
+      date
+      );
+
+      setState(() {
+      loading = false;
+    });
+
+
     Navigator.push(
       context,
       MaterialPageRoute(
