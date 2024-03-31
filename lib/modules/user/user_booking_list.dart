@@ -40,78 +40,116 @@ class _UserBookingListState extends State<UserBookingList> {
         ),
         body: TabBarView(
           children: [
-            ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.teal),
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.event),
-                      title: const Text('Product'),
-                      subtitle: const Text('Price:'),
-                      trailing: CustomButton(
-                        onPressed: () {},
-                        text: 'View More',
-                      ),
-                    ),
-                  ),
-                );
+            FutureBuilder<List<dynamic>>(
+              future: ApiServiece().fetchOrdes(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  print(snapshot.data!);
+
+                  List<dynamic> orders = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.teal),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(Icons.event),
+                            title: Text(orders[index]['login_data']['email']),
+                            subtitle:
+                                Text('Price: ${orders[index]['order_status']}'),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
               },
             ),
-
             // Placeholder for Service Booking tab
-            const Center(child: Text('Service Booking Tab')),
+            FutureBuilder<List<dynamic>>(
+              future: ApiServiece().fetchServiceBookings(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  List<dynamic> serviceBookings = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: serviceBookings.length,
+                    itemBuilder: (context, index) {
+                      final booking = serviceBookings[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.teal),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(Icons.event),
+                            title: Text('Date ${serviceBookings[index]["date"]}'),
+                            
+                            
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
             // Placeholder for Doctor Booking tab
 
             FutureBuilder<List<dynamic>>(
                 future: futureDocServiceList,
                 builder: (context, snapshot) {
-
-                
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                     
-                    return const Center(child: CircularProgressIndicator(color: Colors.teal,));
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.teal,
+                    ));
                   } else if (snapshot.hasError) {
-                   
-                     
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else {
+                    return snapshot.data!.length == 0
+                        ? const Center(
+                            child: Text('no  data'),
+                          )
+                        : ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              final appointment = snapshot.data![index];
 
-                    
-                    return snapshot.data!.length == 0 ?Center(child: Text('no  data'),) :
-                    ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                       
-
-                        
-                        final appointment = snapshot.data![index];
-                      
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 20),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.teal),
-                            ),
-                            child: ListTile(
-                              leading: const Icon(Icons.event),
-                              title: const Text('Product'),
-                              subtitle: const Text('Price:'),
-                              trailing: CustomButton(
-                                onPressed: () {},
-                                text: 'View More',
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 20),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.teal),
+                                  ),
+                                  child: ListTile(
+                                    leading: const Icon(Icons.event),
+                                    title: const Text('Product'),
+                                    subtitle: const Text('Price:'),
+                                    trailing: CustomButton(
+                                      onPressed: () {},
+                                      text: 'View More',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
                   }
                 })
           ],

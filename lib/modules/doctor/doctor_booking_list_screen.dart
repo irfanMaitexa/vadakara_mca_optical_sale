@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/user/user_booking_details.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
+
 class DoctorBookingListScreen extends StatefulWidget {
+  const DoctorBookingListScreen({super.key});
+
   @override
-  _DoctorBookingListScreenState createState() => _DoctorBookingListScreenState();
+  State<DoctorBookingListScreen> createState() => _DoctorBookingListScreenState();
 }
 
 class _DoctorBookingListScreenState extends State<DoctorBookingListScreen> {
-  List<Appointment> appointments = [
-    Appointment(icon: Icons.event, bookingDate: '2024-03-10'),
-    Appointment(icon: Icons.event, bookingDate: '2024-03-15'),
-    Appointment(icon: Icons.event, bookingDate: '2024-03-20'),
-  ];
+ String doctorId = 'your_doctor_id_here'; // Replace 'your_doctor_id_here' with the actual doctor ID
+  late Future<List<dynamic>> bookings;
+
+  @override
+  void initState() {
+    super.initState();
+    bookings = ApiServiece().fetchDocBooking(doctorId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,45 +27,46 @@ class _DoctorBookingListScreenState extends State<DoctorBookingListScreen> {
       appBar: AppBar(
         title: const Text('User Booking List'),
       ),
-      body: ListView.builder(
-        itemCount: appointments.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: Colors.teal), // Set border color to teal
-              ),
-              child: ListTile(
-                leading: Icon(appointments[index].icon),
-                title: Text(appointments[index].bookingDate),
-                trailing: CustomButton(
-                  // Use CustomButton widget for the 'View More' button
-                  onPressed: () {
-                    // Handle View More button press
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const  BookingDetailsScreen(),
+      body: FutureBuilder<List<dynamic>>(
+        future: bookings,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final booking = snapshot.data![index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.teal),
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.book),
+                      title: Text(booking['date']),
+                      trailing: CustomButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const BookingDetailsScreen(),
+                            ),
+                          );
+                        },
+                        text: 'View More',
                       ),
-                    );
-                  },
-                  text: 'View More',
-                ),
-              ),
-            ),
-          );
+                    ),
+                  ),
+                );
+              },
+            );
+          }
         },
       ),
     );
   }
-}
-
-class Appointment {
-  final IconData icon;
-  final String bookingDate;
-
-  Appointment({required this.icon, required this.bookingDate});
 }

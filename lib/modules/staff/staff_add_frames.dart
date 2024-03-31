@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
 
@@ -25,23 +26,64 @@ class _StaffAddFrameScreenState extends State<StaffAddFrameScreen> {
     image = await picker.pickImage(source: ImageSource.gallery);
   }
 
-  final _nameController = TextEditingController();
-  final _description = TextEditingController();
-  final _priceController = TextEditingController();
+  String selectedGlass = 'EYE GLASS';
+
+  final TextEditingController brandController = TextEditingController();
+  final TextEditingController modelController = TextEditingController();
+  final TextEditingController colorController = TextEditingController();
+  final TextEditingController materialController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController imageController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  bool loading = false;
+
+  @override
+  void dispose() {
+    brandController.dispose();
+    modelController.dispose();
+    colorController.dispose();
+    materialController.dispose();
+    priceController.dispose();
+    descriptionController.dispose();
+    imageController.dispose();
+    typeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Frames'),
+        title: Text('Add Glass'),
       ),
       bottomSheet: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: CustomButton(
           text: 'Add',
-          onPressed: () {},
+          onPressed: () async {
+            if (!areControllersEmpty()) {
+              await ApiServiece().addProduct(
+                  context: context,
+                  brand: brandController.text,
+                  model: modelController.text,
+                  color: colorController.text,
+                  material: materialController.text,
+                  price: priceController.text,
+                  type: 'frame',
+                  description: descriptionController.text,
+                  imagePath: image!.path);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('All fields are required'),
+                ),
+              );
+            }
+          },
         ),
       ),
       body: Form(
@@ -124,7 +166,7 @@ class _StaffAddFrameScreenState extends State<StaffAddFrameScreen> {
                   ),
                   IconButton(
                       onPressed: () {
-                        print(image!.path);
+                     
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
@@ -140,28 +182,52 @@ class _StaffAddFrameScreenState extends State<StaffAddFrameScreen> {
                       ))
                 ],
               ),
-              const SizedBox(
+              SizedBox(
                 height: 20,
               ),
               CustomTextField(
-                hintText: 'Enter name',
-                controller: _nameController,
+                hintText: 'Enter brand',
+                controller: brandController,
                 borderColor: Colors.grey,
               ),
-              const SizedBox(
+              SizedBox(
                 height: 20,
               ),
               CustomTextField(
                 hintText: 'Enter description',
-                controller: _description,
+                controller: descriptionController,
                 borderColor: Colors.grey,
               ),
-              const SizedBox(
+              SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: 'Enter model',
+                controller: modelController,
+                borderColor: Colors.grey,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: 'Enter color',
+                controller: colorController,
+                borderColor: Colors.grey,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              CustomTextField(
+                hintText: 'Enter material ',
+                controller: materialController,
+                borderColor: Colors.grey,
+              ),
+              SizedBox(
                 height: 20,
               ),
               CustomTextField(
                 hintText: 'Enter price',
-                controller: _priceController,
+                controller: priceController,
                 borderColor: Colors.grey,
               ),
             ],
@@ -169,5 +235,16 @@ class _StaffAddFrameScreenState extends State<StaffAddFrameScreen> {
         ),
       ),
     );
+  }
+
+  bool areControllersEmpty() {
+    return brandController.text.isEmpty &&
+        modelController.text.isEmpty &&
+        colorController.text.isEmpty &&
+        materialController.text.isEmpty &&
+        priceController.text.isEmpty &&
+        descriptionController.text.isEmpty &&
+        imageController.text.isEmpty &&
+        typeController.text.isEmpty;
   }
 }

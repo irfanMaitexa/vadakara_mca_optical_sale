@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? emailError;
   String? passwordError;
-  bool  loading =  false;
+  bool loading = false;
 
   @override
   void dispose() {
@@ -101,17 +101,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-               loading ?  Center(child: CircularProgressIndicator(),)  : SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: 50,
-                  child: CustomButton(
-                    text: 'LOG IN',
-                    color: KButtonColor,
-                    onPressed: () {
-                      _loginHandler();
-                    },
-                  ),
-                ),
+                loading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        child: CustomButton(
+                          text: 'LOG IN',
+                          color: KButtonColor,
+                          onPressed: () {
+                            _loginHandler();
+                          },
+                        ),
+                      ),
                 const SizedBox(
                   height: 30,
                 ),
@@ -148,63 +152,56 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _loginHandler() async{
-    
-      if(_formKey.currentState!.validate()){
+  void _loginHandler() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        setState(() {
+          loading = true;
+        });
 
-
-        try{
-
-          setState(() {
-            loading = true;
-          });
-
-          var role =  await ApiServiece().loginUser(_emailController.text, _passwordController.text, context);
-            print(role);
-         if (role == 2) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const UserRootScreen(),
-        ),
-        (route) => false,
-      );
-    }
-
-         
-         
-         
-         
-         
-          setState(() {
-            loading = false;
-          });
-        
-        
-        }catch(e){
-
-          setState(() {
-            loading = false;
-          });
-
-
-           if(context.mounted){
-            ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(content: Text('Somthing went wronng')));
-           }
-
-
-          
+        var role = await ApiServiece().loginUser(
+            _emailController.text, _passwordController.text, context);
+        print(role);
+        if (role == 2) {
+          if (context.mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserRootScreen(),
+              ),
+              (route) => false,
+            );
+          }
         }
 
+        if(role == 3){
 
+           if (context.mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const StaffHomeScreen(),
+              ),
+              (route) => false,
+            );
+          }
 
+        }
 
+        setState(() {
+          loading = false;
+        });
+      } catch (e) {
+        setState(() {
+          loading = false;
+        });
 
-    
-
+        if (context.mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Somthing went wronng')));
+        }
       }
-    
+    }
 
     // if (_emailController.text.trim() == 'user@gmail.com') {
     //   Navigator.pushAndRemoveUntil(

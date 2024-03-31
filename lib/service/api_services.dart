@@ -87,7 +87,7 @@ class ApiServiece {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Password changed successfully'),
             duration: Duration(seconds: 2),
           ),
@@ -97,7 +97,7 @@ class ApiServiece {
           SnackBar(
             content: Text(
                 'Failed to change password. Error: ${response.statusCode}'),
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -105,7 +105,7 @@ class ApiServiece {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error occurred: $e'),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -157,14 +157,14 @@ class ApiServiece {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Item added'),
+              content: const Text('Item added'),
               action: SnackBarAction(
                 label: 'go to cart',
                 onPressed: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => UserCartListScreen(),
+                        builder: (context) => const UserCartListScreen(),
                       ));
                 },
               ),
@@ -246,18 +246,18 @@ class ApiServiece {
       if (response.statusCode == 200) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Order placed sccessfully')),
+            const SnackBar(content: Text('Order placed sccessfully')),
           );
 
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => OrderConfirmScreen(),
+                builder: (context) => const OrderConfirmScreen(),
               ));
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
               content: Text('Error placing order. Please try again later.')),
         );
       }
@@ -265,13 +265,13 @@ class ApiServiece {
       // Handle exceptions
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error placing order. Please try again later.')),
+        const SnackBar(
+            content: Text('Error placing order. Please try again later.')),
       );
     }
   }
 
-
-    Future<List<dynamic>> fetchUserOrdes() async {
+  Future<List<dynamic>> fetchUserOrdes() async {
     final response = await http.get(
       Uri.parse('$baseUrl/user/view-order/${DbService.getLoginId()}'),
     );
@@ -288,22 +288,20 @@ class ApiServiece {
   }
 
   //
-    Future<List<dynamic>> fetchCartItems(String loginId) async {
+  Future<List<dynamic>> fetchCartItems(String loginId) async {
     final url = Uri.parse('$baseUrl/api/user/view-cart/$loginId');
     final response = await http.get(url);
 
-    
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
 
-      
       return jsonData['data'];
     } else {
       throw Exception('Failed to load cart items');
     }
   }
 
-  //fetch 
+  //fetch
   Future<List<dynamic>> fetchDocBookings(String loginId) async {
     final response = await http.get(
       Uri.parse('$baseUrl/api/user/view-doc-booking/$loginId'),
@@ -317,43 +315,44 @@ class ApiServiece {
 
   //doc booking
 
-  Future<void> bookDoctor(BuildContext context,String docId,String date) async {
-  try {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/user/doctor-booking/${DbService.getLoginId()}/$docId'),
-      headers: <String, String>{
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {
-        'date': date,
-      
-      },
-    );
-
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('successful'),
-        ),
+  Future<void> bookDoctor(
+      BuildContext context, String docId, String date) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            '$baseUrl/api/user/doctor-booking/${DbService.getLoginId()}/$docId'),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'date': date,
+        },
       );
-    } else {
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('successful'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed'),
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed'),
+          content: Text('Error making POST request: $e'),
         ),
       );
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error making POST request: $e'),
-      ),
-    );
   }
-}
 
- //fetch all product
- Future<List<dynamic>> fetchAllProduct() async {
+  //fetch all product
+  Future<List<dynamic>> fetchAllProduct() async {
     final response = await http.get(
       Uri.parse('$baseUrl/api/view-prod'),
     );
@@ -365,40 +364,386 @@ class ApiServiece {
   }
 
   //book service
-  Future<void> bookService(BuildContext context, String loginId, String date, String complaint) async {
-  try {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/user/service-booking/$loginId'),
-      headers: <String, String>{
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {
-        'date': date,
-        'complaint': complaint,
-      },
+  Future<void> bookService(BuildContext context, String loginId, String date,
+      String complaint) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/user/service-booking/$loginId'),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'date': date,
+          'complaint': complaint,
+        },
+      );
+
+      print(Uri.parse('$baseUrl/api/user/service-booking/$loginId'));
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Service booking successful'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Failed to make service booking. Status code: ${response.statusCode}'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error making service booking: $e'),
+        ),
+      );
+    }
+  }
+
+//fetch orders
+  Future<List<dynamic>> fetchOrdes() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/user/view-order/${DbService.getLoginId()}'),
     );
 
     if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body)['Data'];
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }
+
+  //view service
+  Future<List<dynamic>> fetchServiceBookings() async {
+    final response = await http.get(
+      Uri.parse(
+          '$baseUrl/api/user/view-service-booking/${DbService.getLoginId()}'),
+    );
+
+    print(Uri.parse(
+        '$baseUrl/api/user/view-service-booking/${DbService.getLoginId()}'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception('Failed to load service bookings');
+    }
+  }
+
+  //add
+  Future<void> updateCartQuantity(BuildContext context, String loginId,
+      String productId, int quantity) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/user/update-cart-quantity/$loginId/$productId'),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'quantity': quantity.toString(),
+        },
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cart quantity updated successfully'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Failed to update cart quantity. Status code: ${response.statusCode}'),
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Service booking successful'),
+          content: Text('Error updating cart quantity: $e'),
+        ),
+      );
+    }
+  }
+
+//add product
+
+  Future<void> addProduct(
+      {required BuildContext context,
+      required String brand,
+      required String model,
+      required String color,
+      required String material,
+      required String price,
+      required String type,
+      required String description,
+      required String imagePath}) async {
+    // Define the URL
+    Uri url = Uri.parse('$baseUrl/api/staff/add-prod');
+
+    print(url);
+
+    // Define the request body parameters
+    var body = {
+      'brand': brand,
+      'model': model,
+      'color': color,
+      'material': material,
+      'price': price,
+      'description': description,
+      'type': type,
+    };
+
+    try {
+      // Show loading Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Adding product..."),
+            ],
+          ),
+          duration: Duration(minutes: 1),
+        ),
+      );
+
+      // Make the POST request
+      var request = http.MultipartRequest('POST', url);
+
+      request.files.add(
+        await http.MultipartFile.fromPath('image', imagePath),
+      );
+      print(imagePath);
+
+      request.fields.addAll(body);
+      // Send the request
+      var response = await request.send();
+      print(response.statusCode);
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Text("Success"),
+              ],
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Text("Faild"),
+              ],
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Text("faild"),
+            ],
+          ),
+        ),
+      );
+    } finally {
+      // Hide loading Snackbar
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    }
+  }
+
+  //view services staff
+  Future<List<dynamic>> fetchBookings() async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/api/staff/view-service-bookings'));
+    print(Uri.parse('$baseUrl/api/staff/view-service-bookings'));
+    if (response.statusCode == 200) {
+      print(response.body);
+      return json.decode(response.body)['data'];
+    } else {
+      throw Exception('Failed to load bookings');
+    }
+  }
+
+  //update
+  Future<void> updateServiceStatus(
+      BuildContext context, String id, String bookedDate) async {
+    // Define the URL
+    String url = '$baseUrl/api/staff/update-service-stat/$id/$bookedDate';
+
+    try {
+      var response = await http.put(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Service status updated successfully'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } else {
+        // Show an error Snackbar
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Failed to update service status. Status code: ${response.statusCode}'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Show an error Snackbar
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating service status: $e'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+  //upadte attenedence
+  Future<void> updateAttendance(
+      String loginId, bool isPresent, BuildContext context) async {
+    // Define the URL
+    String url = '$baseUrl/api/staff/attendance-med/$loginId';
+
+    // Define the request body parameter
+    var body = {
+      'isPresent': isPresent.toString(),
+    };
+
+    try {
+      // Make the PUT request
+      var response = await http.put(Uri.parse(url), body: body);
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Attendedns successfully'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Faild'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Attendedns faild!!!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+//get profile
+  Future<List<dynamic>> getStaffProfile(String loginId) async {
+    final url = '$baseUrl/api/profile/staff/$loginId';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['data'];
+      } else {
+        throw Exception('Somthing went wrong');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<dynamic>> fetchDocBooking(String doctorId) async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/api/doctor/view-bookings/$doctorId'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load bookings');
+    }
+  }
+
+
+  Future<void> updateBookingStatus(BuildContext context, String id, String bookedDate) async {
+  // Show loading snack bar
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(width: 16.0),
+          Text('Updating booking status...'),
+        ],
+      ),
+    ),
+  );
+
+  // Replace the URL with your actual API endpoint
+  final url = Uri.parse('http://localhost:8080/api/doctor/update-booking-stat/$id/$bookedDate');
+
+  try {
+    // Make the PUT request
+    final response = await http.put(url);
+
+    
+
+    // Check the response status code
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Booking status updated successfully'),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to make service booking. Status code: ${response.statusCode}'),
+          content: Text('Failed to update booking status. Status code: ${response.statusCode}'),
         ),
       );
     }
   } catch (e) {
+    // Hide the loading snack bar
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Error making service booking: $e'),
+        content: Text('An error occurred: $e'),
       ),
     );
   }
 }
-
-
 }

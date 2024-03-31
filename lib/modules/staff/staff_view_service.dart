@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:optical_sale/modules/staff/staff_service_details.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 
-
 class StaffViewServiceScreen extends StatefulWidget {
-  const StaffViewServiceScreen({super.key});
+  const StaffViewServiceScreen({Key? key}) : super(key: key);
 
   @override
-  State<StaffViewServiceScreen> createState() =>
-      _StaffViewServiceScreenState();
+  State<StaffViewServiceScreen> createState() => _StaffViewServiceScreenState();
 }
 
 class _StaffViewServiceScreenState extends State<StaffViewServiceScreen> {
@@ -19,45 +18,85 @@ class _StaffViewServiceScreenState extends State<StaffViewServiceScreen> {
         children: [
           AppBar(
             backgroundColor: Colors.white,
-            title: const Text('Bookings'),
+            title: const Text('Bookigs'),
             centerTitle: true,
           ),
           Expanded(
-              child: ListView.builder(
-                  itemBuilder: (context, index) => Container(
-                    margin: const EdgeInsets.all(10),
+            child: FutureBuilder<List<dynamic>>(
+              future: ApiServiece().fetchBookings(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  List<dynamic> bookings = snapshot.data ?? [];
+                  return ListView.builder(
+                    itemCount: bookings.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                            )),
-                        child: ListTile(
-                          onTap: () {
-
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => StaffServiceDeatilsScreen(image: "https://img.freepik.com/free-photo/sunglasses_1203-8703.jpg?size=626&ext=jpg&ga=GA1.1.1672774589.1699860837&semt=ais"),));
-                          },
-    
-                          leading: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Image.network(
-                              "https://img.freepik.com/free-photo/sunglasses_1203-8703.jpg?size=626&ext=jpg&ga=GA1.1.1672774589.1699860837&semt=ais"
-                            ),
-                          ),
-                          title: const Text(
-                            'Name',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: const Text('booking time'),
-                          trailing: CustomButton(
-                            text: 'Accept',
-                            onPressed: () {},
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Colors.grey.shade300,
                           ),
                         ),
-                      )))
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => StaffServiceDeatilsScreen(
+                                  details: bookings[index],
+                                ),
+                              ),
+                            );
+                          },
+                          leading: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(Icons.book)),
+                          title: Text(
+                            bookings[index]['name'],
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(bookings[index]['date']),
+                          trailing: CustomButton(
+                            text: 'Accept',
+                            onPressed: () async{
+                              try {
+                              
+                                
+                                await ApiServiece().updateServiceStatus(
+                                  context,
+                                  bookings[index]['_id'],
+                                  bookings[index]['date'],
+                                );
+
+                                setState(() {
+                                  
+                                });
+                              } catch (e) {
+                                setState(() {
+                                  
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
         ],
       ),
     );

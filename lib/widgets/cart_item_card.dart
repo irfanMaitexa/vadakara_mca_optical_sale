@@ -5,14 +5,20 @@ class ItemCard extends StatefulWidget {
   final String imageUrl;
    int quantity;
 
-  ItemCard({required this.name, required this.imageUrl,required this.quantity});
+  ItemCard({super.key, 
+    required this.name, 
+    required this.imageUrl,
+    required this.quantity,
+    });
 
   @override
   _ItemCardState createState() => _ItemCardState();
 }
 
 class _ItemCardState extends State<ItemCard> {
-  
+
+
+  bool loading = false;
 
   void _increment() {
     setState(() {

@@ -50,6 +50,10 @@ class _UserCartListScreenState extends State<UserCartListScreen> {
 
   }
 
+
+
+  int qty = 0;
+
   
 
   
@@ -121,8 +125,9 @@ class _UserCartListScreenState extends State<UserCartListScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
 
-            print(snapshot.data?.length);
+            
             final cartItems = snapshot.data!;
+
 
 
 
@@ -132,12 +137,16 @@ class _UserCartListScreenState extends State<UserCartListScreen> {
             return ListView.builder(
               itemCount: cartItems.length,
               itemBuilder: (context, index) {
-                 
                 final item = cartItems[index];
+
+                qty = item['quantity'];
+                 
+                
                 return ItemCard(
                   name: item['brand'],
                   imageUrl: item['image'],
-                  quantity: item['quantity']
+                  quantity: qty,
+                  
                 );
               },
             );

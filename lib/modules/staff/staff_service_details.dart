@@ -1,14 +1,16 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:optical_sale/service/api_services.dart';
 import 'package:optical_sale/widgets/custom_button.dart';
 import 'package:optical_sale/widgets/custom_text_field.dart';
 
 class StaffServiceDeatilsScreen extends StatefulWidget {
-  const StaffServiceDeatilsScreen({super.key, required this.image});
+  const StaffServiceDeatilsScreen({super.key, required this.details});
+
+  final Map<String,dynamic> details;
 
 
-  final  String image;
 
   @override
   State<StaffServiceDeatilsScreen> createState() => _StaffServiceDeatilsScreenState();
@@ -19,6 +21,9 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
 
 
   final _controller = TextEditingController();
+
+
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -44,25 +49,31 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
 
               color: Colors.greenAccent,
               text: 'Accept',
-              onPressed: () {
+              onPressed: () async{
 
-                showDialog(context: context, builder: (context) => AlertDialog(
-                  title: const Text('Add commission'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CustomTextField(
-                        borderColor: Colors.grey,
-                        hintText: 'add', controller: _controller
-                      ),
-                      CustomButton(text: 'Add', onPressed: () {
+                try{
+                  setState(() {
+                    loading = true;
+                  });
 
-                          
-                        
-                      },)
-                    ],
-                  ) ,
-                ),);
+                  await  ApiServiece().updateServiceStatus(
+                    context,widget.details['_id'], widget.details['date']);
+
+                setState(() {
+                  loading = false;
+                });
+
+                }catch(e){
+
+                  setState(() {
+                    loading = false;
+                  });
+
+
+
+                }
+
+                
 
 
                 
@@ -74,26 +85,18 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
       ),
       
       
-      body: Padding(
+      body: loading ? const  Center(child: CircularProgressIndicator(),) : Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Expanded(
-              child: Card(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(widget.image),
-                ),
-              ),
-            ),
+          
             Expanded(
                 child: SingleChildScrollView(
               child: Card(
                 child: Column(
                   children: [
                     const Text(
-                      'Specification',
+                      'Details',
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -114,8 +117,8 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
                                 style: TextStyle(color: Colors.grey.shade500),
                               ),
                               const Spacer(),
-                              const Text(
-                                'sunglass',
+                               Text(
+                                widget.details['name'],
                                 style:
                                     TextStyle(fontSize: 17, color: Colors.black),
                               ),
@@ -124,6 +127,22 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
                           const SizedBox(
                             height: 10,
                           ),
+                           Row(
+                            children: [
+                              Text(
+                                'phone',
+                                style: TextStyle(color: Colors.grey.shade500),
+                              ),
+                              const Spacer(),
+                               Text(
+                                widget.details['phone'],
+                                style:
+                                    TextStyle(fontSize: 17, color: Colors.black),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 10,),
 
                          
 
@@ -134,8 +153,8 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
                                 style: TextStyle(color: Colors.grey.shade500),
                               ),
                               const Spacer(),
-                              const Text(
-                                '10-3-2023',
+                               Text(
+                                widget.details['date'],
                                 style:
                                     TextStyle(fontSize: 17, color: Colors.black),
                               ),
@@ -150,7 +169,7 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
                               
                               
                               const Text(
-                                'Description',
+                                'Complaint',
                                 style:
                                     TextStyle(fontSize: 17, color: Colors.black),
                               ),
@@ -159,7 +178,8 @@ class _StaffServiceDeatilsScreenState extends State<StaffServiceDeatilsScreen> {
 
 
                               Text(
-                                'Description',
+                                widget.details['complaint'],
+                                maxLines: 20,
                                 style: TextStyle(
                                     fontSize: 17, color: Colors.grey.shade500),
                               ),

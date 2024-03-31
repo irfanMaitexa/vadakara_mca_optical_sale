@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
@@ -185,18 +183,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                // const Text(
-                //   'Name',
-                //   style: TextStyle(color: Colors.black, fontSize: 16),
-                // ),
-                // const SizedBox(
-                //   height: 10,
-                // ),
-                // CustomTextField(
-                //   hintText: 'Name',
-                //   controller: _nameController,
-                //   borderColor: Colors.grey,
-                // ),
+               
                 const Text(
                   'Complaint',
                   style: TextStyle(color: Colors.black, fontSize: 16),
